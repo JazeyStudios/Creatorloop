@@ -1,44 +1,3 @@
-Absolutely! Adding more **detailed features** like banning/unbanning creators/hosts, viewing violation history, and quick links like "View Live Now" profiles for creators is definitely doable.
-
----
-
-### Here’s the plan for these extra features:
-
-**1. Ban / Unban functionality**
-
-* Creators and Hosts can be banned/unbanned.
-* Banned users show a red badge or strikethrough.
-* Banned users cannot be assigned to new relationships (optional).
-
-**2. Violation logs per creator/host**
-
-* You can add/view violations (like rule breaches) per creator/host.
-* Violation history stored as a list of text + timestamp.
-
-**3. "View Live Now"**
-
-* Button/link in creator row to open their TikTok profile or a placeholder URL.
-* Opens in a new tab.
-
-**4. Show banned status visually**
-
-* Badges or icons next to names.
-
----
-
-### I’ll expand the code with these features:
-
-* Add `banned` boolean to creators and hosts
-* Add `violations` array per creator/host, with date + reason
-* Add buttons for Ban/Unban, View Violations, View Live Now
-* Modal or expandable section to see violations
-* Disable relationships with banned users (optional, can allow still)
-
----
-
-### Here’s the **updated full HTML + JS** code with these features added:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -327,12 +286,14 @@ Absolutely! Adding more **detailed features** like banning/unbanning creators/ho
 </head>
 <body>
 
-  <
-```
-
-
-aside class="sidebar"> <div class="logo">StreamCore</div> <nav> <button class="active" data-tab="dashboard">Dashboard</button> <button data-tab="creators">Creators</button> <button data-tab="hosts">Hosts</button> <button data-tab="relationships">Relationships</button> </nav>
-
+  <aside class="sidebar">
+    <div class="logo">StreamCore</div>
+    <nav>
+      <button class="active" data-tab="dashboard">Dashboard</button>
+      <button data-tab="creators">Creators</button>
+      <button data-tab="hosts">Hosts</button>
+      <button data-tab="relationships">Relationships</button>
+    </nav>
   </aside>
 
   <main class="main">
@@ -345,80 +306,74 @@ aside class="sidebar"> <div class="logo">StreamCore</div> <nav> <button class="a
       </div>
     </section>
 
-```
-<section id="creators" class="tab-content" style="display:none;">
-  <h1>Manage Creators</h1>
-  <form id="creatorForm">
-    <input type="hidden" id="creatorId" />
-    <label for="creatorName">Name</label>
-    <input type="text" id="creatorName" required />
-    <label for="creatorFollowers">Followers</label>
-    <input type="number" id="creatorFollowers" min="0" required />
-    <button type="submit" class="submit-btn">Add Creator</button>
-  </form>
+    <section id="creators" class="tab-content" style="display:none;">
+      <h1>Manage Creators</h1>
+      <form id="creatorForm">
+        <input type="hidden" id="creatorId" />
+        <label for="creatorName">Name</label>
+        <input type="text" id="creatorName" required />
+        <label for="creatorFollowers">Followers</label>
+        <input type="number" id="creatorFollowers" min="0" required />
+        <button type="submit" class="submit-btn">Add Creator</button>
+      </form>
 
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Followers</th><th>Actions</th></tr>
-    </thead>
-    <tbody id="creatorsTableBody"></tbody>
-  </table>
-</section>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Followers</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="creatorsTableBody"></tbody>
+      </table>
+    </section>
 
-<section id="hosts" class="tab-content" style="display:none;">
-  <h1>Manage Hosts</h1>
-  <form id="hostForm">
-    <input type="hidden" id="hostId" />
-    <label for="hostName">Name</label>
-    <input type="text" id="hostName" required />
-    <label for="hostExperience">Experience (years)</label>
-    <input type="number" id="hostExperience" min="0" required />
-    <button type="submit" class="submit-btn">Add Host</button>
-  </form>
+    <section id="hosts" class="tab-content" style="display:none;">
+      <h1>Manage Hosts</h1>
+      <form id="hostForm">
+        <input type="hidden" id="hostId" />
+        <label for="hostName">Name</label>
+        <input type="text" id="hostName" required />
+        <label for="hostExperience">Experience (years)</label>
+        <input type="number" id="hostExperience" min="0" required />
+        <button type="submit" class="submit-btn">Add Host</button>
+      </form>
 
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Experience</th><th>Actions</th></tr>
-    </thead>
-    <tbody id="hostsTableBody"></tbody>
-  </table>
-</section>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Experience</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="hostsTableBody"></tbody>
+      </table>
+    </section>
 
-<section id="relationships" class="tab-content" style="display:none;">
-  <h1>Manage Relationships</h1>
-  <form id="relationshipForm">
-    <label for="relCreator">Creator</label>
-    <select id="relCreator" required></select>
+    <section id="relationships" class="tab-content" style="display:none;">
+      <h1>Manage Relationships</h1>
+      <form id="relationshipForm">
+        <label for="relCreator">Creator</label>
+        <select id="relCreator" required></select>
 
-    <label for="relHost">Host</label>
-    <select id="relHost" required></select>
+        <label for="relHost">Host</label>
+        <select id="relHost" required></select>
 
-    <button type="submit" class="submit-btn">Add Relationship</button>
-  </form>
+        <button type="submit" class="submit-btn">Add Relationship</button>
+      </form>
 
-  <div class="relationship-list" id="relationshipList"></div>
-</section>
-```
+      <div class="relationship-list" id="relationshipList"></div>
+    </section>
 
   </main>
 
   <!-- Modal for violations -->
-
   <div class="modal-overlay" id="violationModal">
     <div class="modal">
       <button class="close-btn" id="closeModalBtn">&times; Close</button>
       <h2>Violations for <span id="violationUserName"></span></h2>
       <ul id="violationList"></ul>
 
-```
-  <form id="addViolationForm">
-    <label for="violationReason">Add Violation</label>
-    <textarea id="violationReason" placeholder="Describe violation..." required></textarea>
-    <button type="submit" class="submit-btn">Add Violation</button>
-  </form>
-</div>
-```
-
+      <form id="addViolationForm">
+        <label for="violationReason">Add Violation</label>
+        <textarea id="violationReason" placeholder="Describe violation..." required></textarea>
+        <button type="submit" class="submit-btn">Add Violation</button>
+      </form>
+    </div>
   </div>
 
 <script>
@@ -576,290 +531,280 @@ aside class="sidebar"> <div class="logo">StreamCore</div> <nav> <button class="a
     // Violations
     document.querySelectorAll('.violation-btn').forEach(btn => {
       btn.onclick = () => {
-        const id
-
-
-\= btn.dataset.id;
-violationContext = {type: btn.dataset.type, id};
-openViolationModal();
-};
-});
-// View Live
-document.querySelectorAll('.view-live-btn').forEach(btn => {
-btn.onclick = () => {
-const creator = creators.find(c => c.id === btn.dataset.id);
-if (!creator) return;
-// Replace URL below with real profile link if available
-const urlName = encodeURIComponent(creator.name.replace(/\s/g, '').toLowerCase());
-window\.open(`https://www.tiktok.com/@${urlName}`, '\_blank');
-};
-});
-}
-
-// --- Hosts Management ---
-const hostForm = document.getElementById('hostForm');
-const hostNameInput = document.getElementById('hostName');
-const hostExperienceInput = document.getElementById('hostExperience');
-const hostIdInput = document.getElementById('hostId');
-const hostsTableBody = document.getElementById('hostsTableBody');
-
-hostForm.addEventListener('submit', e => {
-e.preventDefault();
-const name = hostNameInput.value.trim();
-const experience = Number(hostExperienceInput.value);
-const id = hostIdInput.value;
-
-```
-if (!name || isNaN(experience)) return alert('Please enter valid host info.');
-
-if (id) {
-  const h = hosts.find(h => h.id === id);
-  if (h) {
-    h.name = name;
-    h.experience = experience;
+        const id = btn.dataset.id;
+        violationContext = {type: btn.dataset.type, id};
+        openViolationModal();
+      };
+    });
+    // View Live
+    document.querySelectorAll('.view-live-btn').forEach(btn => {
+      btn.onclick = () => {
+        const creator = creators.find(c => c.id === btn.dataset.id);
+        if (!creator) return;
+        // Replace URL below with real profile link if available
+        const urlName = encodeURIComponent(creator.name.replace(/\s/g, '').toLowerCase());
+        window.open(`https://www.tiktok.com/@${urlName}`, '_blank');
+      };
+    });
   }
-  hostForm.querySelector('button').textContent = 'Add Host';
-  hostIdInput.value = '';
-} else {
-  hosts.push({id: generateId(), name, experience, banned: false, violations: []});
-}
-hostForm.reset();
-renderHosts();
-updateSummary();
-```
 
-});
+  // --- Hosts Management ---
+  const hostForm = document.getElementById('hostForm');
+  const hostNameInput = document.getElementById('hostName');
+  const hostExperienceInput = document.getElementById('hostExperience');
+  const hostIdInput = document.getElementById('hostId');
+  const hostsTableBody = document.getElementById('hostsTableBody');
 
-function renderHosts() {
-hostsTableBody.innerHTML = '';
-if (hosts.length === 0) {
-hostsTableBody.innerHTML = '<tr><td colspan="3">No hosts yet.</td></tr>';
-return;
-}
-hosts.forEach(h => {
-const bannedClass = h.banned ? 'banned' : '';
-const bannedBadge = h.banned ? '<span class="badge-banned">BANNED</span>' : '';
-const tr = document.createElement('tr');
-tr.innerHTML = `        <td class="${bannedClass}">${h.name} ${bannedBadge}</td>         <td>${h.experience} years</td>         <td>           <button class="edit-btn" data-id="${h.id}">Edit</button>
-          ${h.banned ?`<button class="unban-btn" data-id="${h.id}">Unban</button>`:`<button class="ban-btn" data-id="${h.id}">Ban</button>`}           <button class="violation-btn" data-id="${h.id}" data-type="host">Violations</button>           <button class="view-live-btn" data-id="${h.id}" data-name="${h.name}">View Live</button>           <button class="delete-btn" data-id="${h.id}">Delete</button>         </td>
-      `;
-hostsTableBody.appendChild(tr);
-});
-addHostsListeners();
-}
+  hostForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = hostNameInput.value.trim();
+    const experience = Number(hostExperienceInput.value);
+    const id = hostIdInput.value;
 
-function addHostsListeners() {
-document.querySelectorAll('#hosts .edit-btn').forEach(btn => {
-btn.onclick = () => {
-const h = hosts.find(ht => ht.id === btn.dataset.id);
-if (!h) return;
-hostNameInput.value = h.name;
-hostExperienceInput.value = h.experience;
-hostIdInput.value = h.id;
-hostForm.querySelector('button').textContent = 'Update Host';
-showTab('hosts');
-};
-});
-document.querySelectorAll('#hosts .delete-btn').forEach(btn => {
-btn.onclick = () => {
-if (!confirm('Delete this host?')) return;
-hosts = hosts.filter(h => h.id !== btn.dataset.id);
-relationships = relationships.filter(r => r.hostId !== btn.dataset.id);
-renderHosts();
-renderRelationships();
-updateSummary();
-};
-});
-document.querySelectorAll('#hosts .ban-btn').forEach(btn => {
-btn.onclick = () => {
-if (!confirm('Ban this host?')) return;
-const h = hosts.find(ht => ht.id === btn.dataset.id);
-if (!h) return;
-h.banned = true;
-renderHosts();
-renderRelationships();
-updateSummary();
-};
-});
-document.querySelectorAll('#hosts .unban-btn').forEach(btn => {
-btn.onclick = () => {
-if (!confirm('Unban this host?')) return;
-const h = hosts.find(ht => ht.id === btn.dataset.id);
-if (!h) return;
-h.banned = false;
-renderHosts();
-renderRelationships();
-updateSummary();
-};
-});
-document.querySelectorAll('#hosts .violation-btn').forEach(btn => {
-btn.onclick = () => {
-violationContext = {type: btn.dataset.type, id: btn.dataset.id};
-openViolationModal();
-};
-});
-document.querySelectorAll('#hosts .view-live-btn').forEach(btn => {
-btn.onclick = () => {
-const host = hosts.find(h => h.id === btn.dataset.id);
-if (!host) return;
-// Replace with real host profile URL if any
-const urlName = encodeURIComponent(host.name.replace(/\s/g, '').toLowerCase());
-window\.open(`https://www.tiktok.com/@${urlName}`, '\_blank');
-};
-});
-}
+    if (!name || isNaN(experience)) return alert('Please enter valid host info.');
 
-// --- Relationships Management ---
-const relCreatorSelect = document.getElementById('relCreator');
-const relHostSelect = document.getElementById('relHost');
-const relationshipForm = document.getElementById('relationshipForm');
-const relationshipList = document.getElementById('relationshipList');
-
-function renderRelationshipSelects() {
-relCreatorSelect.innerHTML = '';
-relHostSelect.innerHTML = '';
-
-```
-const activeCreators = creators.filter(c => !c.banned);
-const activeHosts = hosts.filter(h => !h.banned);
-
-if (activeCreators.length === 0) {
-  relCreatorSelect.innerHTML = '<option disabled>No active creators</option>';
-} else {
-  activeCreators.forEach(c => {
-    const option = document.createElement('option');
-    option.value = c.id;
-    option.textContent = c.name;
-    relCreatorSelect.appendChild(option);
+    if (id) {
+      const h = hosts.find(h => h.id === id);
+      if (h) {
+        h.name = name;
+        h.experience = experience;
+      }
+      hostForm.querySelector('button').textContent = 'Add Host';
+      hostIdInput.value = '';
+    } else {
+      hosts.push({id: generateId(), name, experience, banned: false, violations: []});
+    }
+    hostForm.reset();
+    renderHosts();
+    updateSummary();
   });
-}
-if (activeHosts.length === 0) {
-  relHostSelect.innerHTML = '<option disabled>No active hosts</option>';
-} else {
-  activeHosts.forEach(h => {
-    const option = document.createElement('option');
-    option.value = h.id;
-    option.textContent = h.name;
-    relHostSelect.appendChild(option);
-  });
-}
-```
 
-}
-
-relationshipForm.addEventListener('submit', e => {
-e.preventDefault();
-const creatorId = relCreatorSelect.value;
-const hostId = relHostSelect.value;
-if (!creatorId || !hostId) return alert('Select creator and host');
-
-```
-// Prevent duplicate
-const exists = relationships.some(r => r.creatorId === creatorId && r.hostId === hostId);
-if (exists) return alert('This relationship already exists.');
-
-relationships.push({id: generateId(), creatorId, hostId});
-renderRelationships();
-updateSummary();
-```
-
-});
-
-function renderRelationships() {
-relationshipList.innerHTML = '';
-if (relationships.length === 0) {
-relationshipList.innerHTML = '<p>No relationships yet.</p>';
-return;
-}
-relationships.forEach(r => {
-const creator = creators.find(c => c.id === r.creatorId);
-const host = hosts.find(h => h.id === r.hostId);
-if (!creator || !host) return; // Data corrupted
-const div = document.createElement('div');
-div.className = 'relationship-item';
-const bannedClass = (creator.banned || host.banned) ? 'banned' : '';
-div.innerHTML = `         <span class="${bannedClass}">${creator.name} &mdash; ${host.name}</span>         <button data-id="${r.id}">Remove</button>
+  function renderHosts() {
+    hostsTableBody.innerHTML = '';
+    if (hosts.length === 0) {
+      hostsTableBody.innerHTML = '<tr><td colspan="3">No hosts yet.</td></tr>';
+      return;
+    }
+    hosts.forEach(h => {
+      const bannedClass = h.banned ? 'banned' : '';
+      const bannedBadge = h.banned ? '<span class="badge-banned">BANNED</span>' : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="${bannedClass}">${h.name} ${bannedBadge}</td>
+        <td>${h.experience} years</td>
+        <td>
+          <button class="edit-btn" data-id="${h.id}">Edit</button>
+          ${h.banned ? `<button class="unban-btn" data-id="${h.id}">Unban</button>` : `<button class="ban-btn" data-id="${h.id}">Ban</button>`}
+          <button class="violation-btn" data-id="${h.id}" data-type="host">Violations</button>
+          <button class="view-live-btn" data-id="${h.id}" data-name="${h.name}">View Live</button>
+          <button class="delete-btn" data-id="${h.id}">Delete</button>
+        </td>
       `;
-relationshipList.appendChild(div);
-div.querySelector('button').onclick = () => {
-if (!confirm('Remove this relationship?')) return;
-relationships = relationships.filter(rel => rel.id !== r.id);
-renderRelationships();
-updateSummary();
-};
-});
-}
+      hostsTableBody.appendChild(tr);
+    });
+    addHostsListeners();
+  }
 
-// --- Violation Modal ---
-const violationModal = document.getElementById('violationModal');
-const violationUserName = document.getElementById('violationUserName');
-const violationList = document.getElementById('violationList');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const addViolationForm = document.getElementById('addViolationForm');
-const violationReasonInput = document.getElementById('violationReason');
+  function addHostsListeners() {
+    document.querySelectorAll('#hosts .edit-btn').forEach(btn => {
+      btn.onclick = () => {
+        const h = hosts.find(ht => ht.id === btn.dataset.id);
+        if (!h) return;
+        hostNameInput.value = h.name;
+        hostExperienceInput.value = h.experience;
+        hostIdInput.value = h.id;
+        hostForm.querySelector('button').textContent = 'Update Host';
+        showTab('hosts');
+      };
+    });
+    document.querySelectorAll('#hosts .delete-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (!confirm('Delete this host?')) return;
+        hosts = hosts.filter(h => h.id !== btn.dataset.id);
+        relationships = relationships.filter(r => r.hostId !== btn.dataset.id);
+        renderHosts();
+        renderRelationships();
+        updateSummary();
+      };
+    });
+    document.querySelectorAll('#hosts .ban-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (!confirm('Ban this host?')) return;
+        const h = hosts.find(ht => ht.id === btn.dataset.id);
+        if (!h) return;
+        h.banned = true;
+        renderHosts();
+        renderRelationships();
+        updateSummary();
+      };
+    });
+    document.querySelectorAll('#hosts .unban-btn').forEach(btn => {
+      btn.onclick = () => {
+        if (!confirm('Unban this host?')) return;
+        const h = hosts.find(ht => ht.id === btn.dataset.id);
+        if (!h) return;
+        h.banned = false;
+        renderHosts();
+        renderRelationships();
+        updateSummary();
+      };
+    });
+    document.querySelectorAll('#hosts .violation-btn').forEach(btn => {
+      btn.onclick = () => {
+        violationContext = {type: btn.dataset.type, id: btn.dataset.id};
+        openViolationModal();
+      };
+    });
+    document.querySelectorAll('#hosts .view-live-btn').forEach(btn => {
+      btn.onclick = () => {
+        const host = hosts.find(h => h.id === btn.dataset.id);
+        if (!host) return;
+        // Replace with real host profile URL if any
+        const urlName = encodeURIComponent(host.name.replace(/\s/g, '').toLowerCase());
+        window.open(`https://www.tiktok.com/@${urlName}`, '_blank');
+      };
+    });
+  }
 
-function openViolationModal() {
-let user;
-if (violationContext.type === 'creator') {
-user = creators.find(c => c.id === violationContext.id);
-} else if (violationContext.type === 'host') {
-user = hosts.find(h => h.id === violationContext.id);
-}
-if (!user) return alert('User not found');
+  // --- Relationships Management ---
+  const relCreatorSelect = document.getElementById('relCreator');
+  const relHostSelect = document.getElementById('relHost');
+  const relationshipForm = document.getElementById('relationshipForm');
+  const relationshipList = document.getElementById('relationshipList');
 
-```
-violationUserName.textContent = user.name;
-violationReasonInput.value = '';
-renderViolationList(user.violations);
-violationModal.style.display = 'flex';
-```
+  function renderRelationshipSelects() {
+    relCreatorSelect.innerHTML = '';
+    relHostSelect.innerHTML = '';
 
-}
+    const activeCreators = creators.filter(c => !c.banned);
+    const activeHosts = hosts.filter(h => !h.banned);
 
-function renderViolationList(violations) {
-violationList.innerHTML = '';
-if (!violations || violations.length === 0) {
-violationList.innerHTML = '<li>No violations recorded.</li>';
-return;
-}
-violations.forEach(v => {
-const li = document.createElement('li');
-const dateStr = new Date(v.date).toLocaleString();
-li.textContent = `${dateStr}: ${v.reason}`;
-violationList.appendChild(li);
-});
-}
+    if (activeCreators.length === 0) {
+      relCreatorSelect.innerHTML = '<option disabled>No active creators</option>';
+    } else {
+      activeCreators.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.id;
+        option.textContent = c.name;
+        relCreatorSelect.appendChild(option);
+      });
+    }
+    if (activeHosts.length === 0) {
+      relHostSelect.innerHTML = '<option disabled>No active hosts</option>';
+    } else {
+      activeHosts.forEach(h => {
+        const option = document.createElement('option');
+        option.value = h.id;
+        option.textContent = h.name;
+        relHostSelect.appendChild(option);
+      });
+    }
+  }
 
-addViolationForm.addEventListener('submit', e => {
-e.preventDefault
+  relationshipForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const creatorId = relCreatorSelect.value;
+    const hostId = relHostSelect.value;
+    if (!creatorId || !hostId) return alert('Select creator and host');
 
+    // Prevent duplicate
+    const exists = relationships.some(r => r.creatorId === creatorId && r.hostId === hostId);
+    if (exists) return alert('This relationship already exists.');
 
-();
-const reason = violationReasonInput.value.trim();
-if (!reason) return alert('Enter violation reason.');
+    relationships.push({id: generateId(), creatorId, hostId});
+    renderRelationships();
+    updateSummary();
+  });
 
-```
-let user;
-if (violationContext.type === 'creator') {
-  user = creators.find(c => c.id === violationContext.id);
-} else if (violationContext.type === 'host') {
-  user = hosts.find(h => h.id === violationContext.id);
-}
-if (!user) return alert('User not found');
+  function renderRelationships() {
+    relationshipList.innerHTML = '';
+    if (relationships.length === 0) {
+      relationshipList.innerHTML = '<p>No relationships yet.</p>';
+      return;
+    }
+    relationships.forEach(r => {
+      const creator = creators.find(c => c.id === r.creatorId);
+      const host = hosts.find(h => h.id === r.hostId);
+      if (!creator || !host) return; // Data corrupted
+      const div = document.createElement('div');
+      div.className = 'relationship-item';
+      const bannedClass = (creator.banned || host.banned) ? 'banned' : '';
+      div.innerHTML = `
+        <span class="${bannedClass}">${creator.name} &mdash; ${host.name}</span>
+        <button data-id="${r.id}">Remove</button>
+      `;
+      relationshipList.appendChild(div);
+      div.querySelector('button').onclick = () => {
+        if (!confirm('Remove this relationship?')) return;
+        relationships = relationships.filter(rel => rel.id !== r.id);
+        renderRelationships();
+        updateSummary();
+      };
+    });
+  }
 
-user.violations.push({date: new Date().toISOString(), reason});
-renderViolationList(user.violations);
-violationReasonInput.value = '';
-```
+  // --- Violation Modal ---
+  const violationModal = document.getElementById('violationModal');
+  const violationUserName = document.getElementById('violationUserName');
+  const violationList = document.getElementById('violationList');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const addViolationForm = document.getElementById('addViolationForm');
+  const violationReasonInput = document.getElementById('violationReason');
 
-});
+  function openViolationModal() {
+    let user;
+    if (violationContext.type === 'creator') {
+      user = creators.find(c => c.id === violationContext.id);
+    } else if (violationContext.type === 'host') {
+      user = hosts.find(h => h.id === violationContext.id);
+    }
+    if (!user) return alert('User not found');
 
-closeModalBtn.onclick = () => {
-violationModal.style.display = 'none';
-};
+    violationUserName.textContent = user.name;
+    violationReasonInput.value = '';
+    renderViolationList(user.violations);
+    violationModal.style.display = 'flex';
+  }
 
-// Initialize
-showTab('dashboard'); </script>
+  function renderViolationList(violations) {
+    violationList.innerHTML = '';
+    if (!violations || violations.length === 0) {
+      violationList.innerHTML = '<li>No violations recorded.</li>';
+      return;
+    }
+    violations.forEach(v => {
+      const li = document.createElement('li');
+      const dateStr = new Date(v.date).toLocaleString();
+      li.textContent = `${dateStr}: ${v.reason}`;
+      violationList.appendChild(li);
+    });
+  }
+
+  addViolationForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const reason = violationReasonInput.value.trim();
+    if (!reason) return alert('Enter violation reason.');
+
+    let user;
+    if (violationContext.type === 'creator') {
+      user = creators.find(c => c.id === violationContext.id);
+    } else if (violationContext.type === 'host') {
+      user = hosts.find(h => h.id === violationContext.id);
+    }
+    if (!user) return alert('User not found');
+
+    user.violations.push({date: new Date().toISOString(), reason});
+    renderViolationList(user.violations);
+    violationReasonInput.value = '';
+  });
+
+  closeModalBtn.onclick = () => {
+    violationModal.style.display = 'none';
+  };
+
+  // Initialize
+  showTab('dashboard');
+</script>
 
 <style>
   body {
