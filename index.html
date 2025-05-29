@@ -168,808 +168,274 @@
     background: #fe2c55;
     color: white;
   }
-
-  .relationship-list {
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  .relationship-item {
-    background: #fafafa;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .relationship-item span {
-    font-weight: 600;
-  }
-  .relationship-item button {
-    background: #d92544;
-    border: none;
-    color: white;
-    padding: 6px 14px;
-    border-radius: 12px;
-    cursor: pointer;
-  }
-
-  .scrollable {
-    overflow-y: auto;
-  }
-
-  /* Banned styling */
-  .banned {
-    color: #b20000;
-    font-weight: 700;
-    text-decoration: line-through;
-  }
-  .badge-banned {
-    background: #b20000;
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 12px;
-    margin-left: 6px;
-    user-select: none;
-  }
-
-  /* Modal styles */
-  .modal-overlay {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .modal {
-    background: white;
-    border-radius: 16px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 70vh;
-    overflow-y: auto;
-    padding: 24px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  }
-  .modal h2 {
-    margin-top: 0;
-    margin-bottom: 12px;
-  }
-  .modal ul {
-    list-style: none;
-    padding-left: 0;
-  }
-  .modal ul li {
-    padding: 10px 8px;
-    border-bottom: 1px solid #eee;
-  }
-  .modal ul li:last-child {
-    border-bottom: none;
-  }
-  .modal .close-btn {
-    background: #fe2c55;
-    border: none;
-    color: white;
-    padding: 8px 18px;
-    font-weight: 600;
-    font-size: 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    float: right;
-    margin-top: -8px;
-  }
-
-  /* Violation form inside modal */
-  .modal form label {
-    margin-top: 12px;
-  }
-  .modal form input[type=text], .modal form textarea {
-    width: 100%;
-    padding: 8px 12px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-  }
-  .modal form textarea {
-    resize: vertical;
-    height: 80px;
-  }
-  .modal form button.submit-btn {
-    margin-top: 12px;
-  }
-
 </style>
 </head>
 <body>
 
-  <aside class="sidebar">
-    <div class="logo">StreamCore</div>
-    <nav>
-      <button class="active" data-tab="dashboard">Dashboard</button>
-      <button data-tab="creators">Creators</button>
-      <button data-tab="hosts">Hosts</button>
-      <button data-tab="relationships">Relationships</button>
-    </nav>
-  </aside>
+<div class="sidebar">
+  <div class="logo">StreamCore</div>
+  <nav>
+    <button class="tab-btn active" data-tab="hosts">Hosts</button>
+    <button class="tab-btn" data-tab="creators">Creators</button>
+    <button class="tab-btn" data-tab="bans">Bans</button>
+    <button class="tab-btn" data-tab="violations">Violations</button>
+  </nav>
+</div>
 
-  <main class="main">
-    <section id="dashboard" class="tab-content">
-      <h1>Dashboard</h1>
-      <div class="card">
-        <p><strong>Total Creators:</strong> <span id="totalCreators">0</span></p>
-        <p><strong>Total Hosts:</strong> <span id="totalHosts">0</span></p>
-        <p><strong>Total Relationships:</strong> <span id="totalRelationships">0</span></p>
-      </div>
-    </section>
+<div class="main">
+  <h1>StreamCore Agency Dashboard</h1>
 
-    <section id="creators" class="tab-content" style="display:none;">
-      <h1>Manage Creators</h1>
-      <form id="creatorForm">
-        <input type="hidden" id="creatorId" />
-        <label for="creatorName">Name</label>
-        <input type="text" id="creatorName" required />
-        <label for="creatorFollowers">Followers</label>
-        <input type="number" id="creatorFollowers" min="0" required />
-        <button type="submit" class="submit-btn">Add Creator</button>
-      </form>
-
-      <table>
-        <thead>
-          <tr><th>Name</th><th>Followers</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="creatorsTableBody"></tbody>
-      </table>
-    </section>
-
-    <section id="hosts" class="tab-content" style="display:none;">
-      <h1>Manage Hosts</h1>
+  <section id="hosts" class="tab-content">
+    <div class="card">
       <form id="hostForm">
-        <input type="hidden" id="hostId" />
-        <label for="hostName">Name</label>
-        <input type="text" id="hostName" required />
-        <label for="hostExperience">Experience (years)</label>
-        <input type="number" id="hostExperience" min="0" required />
+        <label for="hostName">Add Host</label>
+        <input type="text" id="hostName" placeholder="Enter host name or ID" required />
         <button type="submit" class="submit-btn">Add Host</button>
       </form>
-
-      <table>
+    </div>
+    <div class="card">
+      <table id="hostsTable">
         <thead>
-          <tr><th>Name</th><th>Experience</th><th>Actions</th></tr>
+          <tr><th>Host Name</th><th>Actions</th></tr>
         </thead>
-        <tbody id="hostsTableBody"></tbody>
+        <tbody></tbody>
       </table>
-    </section>
+    </div>
+  </section>
 
-    <section id="relationships" class="tab-content" style="display:none;">
-      <h1>Manage Relationships</h1>
-      <form id="relationshipForm">
-        <label for="relCreator">Creator</label>
-        <select id="relCreator" required></select>
-
-        <label for="relHost">Host</label>
-        <select id="relHost" required></select>
-
-        <button type="submit" class="submit-btn">Add Relationship</button>
+  <section id="creators" class="tab-content" style="display:none;">
+    <div class="card">
+      <form id="creatorForm">
+        <label for="creatorName">Add Creator</label>
+        <input type="text" id="creatorName" placeholder="Enter creator name or ID" required />
+        <button type="submit" class="submit-btn">Add Creator</button>
       </form>
+    </div>
+    <div class="card">
+      <table id="creatorsTable">
+        <thead>
+          <tr><th>Creator Name</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-      <div class="relationship-list" id="relationshipList"></div>
-    </section>
+  <section id="bans" class="tab-content" style="display:none;">
+    <div class="card">
+      <table id="bansTable">
+        <thead>
+          <tr><th>Banned User</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-  </main>
-
-  <!-- Modal for violations -->
-  <div class="modal-overlay" id="violationModal">
-    <div class="modal">
-      <button class="close-btn" id="closeModalBtn">&times; Close</button>
-      <h2>Violations for <span id="violationUserName"></span></h2>
-      <ul id="violationList"></ul>
-
-      <form id="addViolationForm">
-        <label for="violationReason">Add Violation</label>
-        <textarea id="violationReason" placeholder="Describe violation..." required></textarea>
+  <section id="violations" class="tab-content" style="display:none;">
+    <div class="card">
+      <form id="violationForm">
+        <label for="violationUser">User</label>
+        <input type="text" id="violationUser" placeholder="Enter user name or ID" required />
+        <label for="violationText">Violation</label>
+        <input type="text" id="violationText" placeholder="Describe violation" required />
         <button type="submit" class="submit-btn">Add Violation</button>
       </form>
     </div>
-  </div>
+    <div class="card">
+      <table id="violationsTable">
+        <thead>
+          <tr><th>User</th><th>Violation</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
 
 <script>
-  // Data in memory
-  let creators = [];
-  let hosts = [];
-  let relationships = [];
-
-  // IDs for violation modal context
-  let violationContext = {
-    type: null, // 'creator' or 'host'
-    id: null,
+  // --- Data loading/saving ---
+  const STORAGE_KEYS = {
+    hosts: 'streamcore_hosts',
+    creators: 'streamcore_creators',
+    bans: 'streamcore_bans',
+    violations: 'streamcore_violations'
   };
 
-  function generateId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
+  let hosts = JSON.parse(localStorage.getItem(STORAGE_KEYS.hosts)) || [];
+  let creators = JSON.parse(localStorage.getItem(STORAGE_KEYS.creators)) || [];
+  let bans = JSON.parse(localStorage.getItem(STORAGE_KEYS.bans)) || [];
+  let violations = JSON.parse(localStorage.getItem(STORAGE_KEYS.violations)) || [];
+
+  function saveAll() {
+    localStorage.setItem(STORAGE_KEYS.hosts, JSON.stringify(hosts));
+    localStorage.setItem(STORAGE_KEYS.creators, JSON.stringify(creators));
+    localStorage.setItem(STORAGE_KEYS.bans, JSON.stringify(bans));
+    localStorage.setItem(STORAGE_KEYS.violations, JSON.stringify(violations));
   }
 
-  // Sidebar tabs and content
-  const tabs = document.querySelectorAll('.sidebar nav button');
+  // --- Tab switching ---
+  const tabButtons = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
-
-  function showTab(tabId) {
-    tabContents.forEach(tc => {
-      tc.style.display = tc.id === tabId ? 'block' : 'none';
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => (c.style.display = 'none'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).style.display = 'block';
     });
-    tabs.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === tabId);
-    });
-    updateSummary();
-    if (tabId === 'creators') renderCreators();
-    if (tabId === 'hosts') renderHosts();
-    if (tabId === 'relationships') {
-      renderRelationshipSelects();
-      renderRelationships();
-    }
-  }
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => showTab(btn.dataset.tab));
   });
 
-  // Dashboard summary
-  function updateSummary() {
-    document.getElementById('totalCreators').textContent = creators.length;
-    document.getElementById('totalHosts').textContent = hosts.length;
-    document.getElementById('totalRelationships').textContent = relationships.length;
+  // --- Render tables ---
+  function renderHosts() {
+    const tbody = document.querySelector('#hostsTable tbody');
+    tbody.innerHTML = '';
+    hosts.forEach((host, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${host}</td>
+        <td>
+          <button class="delete-btn" onclick="removeHost(${i})">Remove</button>
+          <button class="view-live-btn" onclick="viewLive('${host}')">View Live</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
-
-  // --- Creators Management ---
-  const creatorForm = document.getElementById('creatorForm');
-  const creatorNameInput = document.getElementById('creatorName');
-  const creatorFollowersInput = document.getElementById('creatorFollowers');
-  const creatorIdInput = document.getElementById('creatorId');
-  const creatorsTableBody = document.getElementById('creatorsTableBody');
-
-  creatorForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = creatorNameInput.value.trim();
-    const followers = Number(creatorFollowersInput.value);
-    const id = creatorIdInput.value;
-
-    if (!name || isNaN(followers)) return alert('Please enter valid creator info.');
-
-    if (id) {
-      // Edit existing
-      const c = creators.find(c => c.id === id);
-      if (c) {
-        c.name = name;
-        c.followers = followers;
-      }
-      creatorForm.querySelector('button').textContent = 'Add Creator';
-      creatorIdInput.value = '';
-    } else {
-      creators.push({id: generateId(), name, followers, banned: false, violations: []});
-    }
-    creatorForm.reset();
-    renderCreators();
-    updateSummary();
-  });
 
   function renderCreators() {
-    creatorsTableBody.innerHTML = '';
-    if (creators.length === 0) {
-      creatorsTableBody.innerHTML = '<tr><td colspan="3">No creators yet.</td></tr>';
-      return;
-    }
-    creators.forEach(c => {
-      const bannedClass = c.banned ? 'banned' : '';
-      const bannedBadge = c.banned ? '<span class="badge-banned">BANNED</span>' : '';
+    const tbody = document.querySelector('#creatorsTable tbody');
+    tbody.innerHTML = '';
+    creators.forEach((creator, i) => {
+      const banned = bans.includes(creator);
+      const banButton = banned 
+        ? `<button class="unban-btn" onclick="unbanUser('${creator}')">Unban</button>`
+        : `<button class="ban-btn" onclick="banUser('${creator}')">Ban</button>`;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="${bannedClass}">${c.name} ${bannedBadge}</td>
-        <td>${c.followers.toLocaleString()}</td>
+        <td>${creator}</td>
         <td>
-          <button class="edit-btn" data-id="${c.id}">Edit</button>
-          ${c.banned ? `<button class="unban-btn" data-id="${c.id}">Unban</button>` : `<button class="ban-btn" data-id="${c.id}">Ban</button>`}
-          <button class="violation-btn" data-id="${c.id}" data-type="creator">Violations</button>
-          <button class="view-live-btn" data-id="${c.id}" data-name="${c.name}">View Live</button>
-          <button class="delete-btn" data-id="${c.id}">Delete</button>
+          <button class="delete-btn" onclick="removeCreator(${i})">Remove</button>
+          ${banButton}
+          <button class="view-live-btn" onclick="viewLive('${creator}')">View Live</button>
         </td>
       `;
-      creatorsTableBody.appendChild(tr);
-    });
-    addCreatorsListeners();
-  }
-
-  function addCreatorsListeners() {
-    // Edit
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.onclick = () => {
-        const c = creators.find(cr => cr.id === btn.dataset.id);
-        if (!c) return;
-        creatorNameInput.value = c.name;
-        creatorFollowersInput.value = c.followers;
-        creatorIdInput.value = c.id;
-        creatorForm.querySelector('button').textContent = 'Update Creator';
-        showTab('creators');
-      };
-    });
-    // Delete
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.onclick = () => {
-        if (!confirm('Delete this creator?')) return;
-        creators = creators.filter(c => c.id !== btn.dataset.id);
-        relationships = relationships.filter(r => r.creatorId !== btn.dataset.id);
-        renderCreators();
-        renderRelationships();
-        updateSummary();
-      };
-    });
-    // Ban
-    document.querySelectorAll('.ban-btn').forEach(btn => {
-      btn.onclick = () => {
-        if (!confirm('Ban this creator?')) return;
-        const c = creators.find(cr => cr.id === btn.dataset.id);
-        if (!c) return;
-        c.banned = true;
-        renderCreators();
-        renderRelationships();
-        updateSummary();
-      };
-    });
-    // Unban
-    document.querySelectorAll('.unban-btn').forEach(btn => {
-      btn.onclick = () => {
-        if (!confirm('Unban this creator?')) return;
-        const c = creators.find(cr => cr.id === btn.dataset.id);
-        if (!c) return;
-        c.banned = false;
-        renderCreators();
-        renderRelationships();
-        updateSummary();
-      };
-    });
-    // Violations
-    document.querySelectorAll('.violation-btn').forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.dataset.id;
-        violationContext = {type: btn.dataset.type, id};
-        openViolationModal();
-      };
-    });
-    // View Live
-    document.querySelectorAll('.view-live-btn').forEach(btn => {
-      btn.onclick = () => {
-        const creator = creators.find(c => c.id === btn.dataset.id);
-        if (!creator) return;
-        // Replace URL below with real profile link if available
-        const urlName = encodeURIComponent(creator.name.replace(/\s/g, '').toLowerCase());
-        window.open(`https://www.tiktok.com/@${urlName}`, '_blank');
-      };
+      tbody.appendChild(tr);
     });
   }
 
-  // --- Hosts Management ---
-  const hostForm = document.getElementById('hostForm');
-  const hostNameInput = document.getElementById('hostName');
-  const hostExperienceInput = document.getElementById('hostExperience');
-  const hostIdInput = document.getElementById('hostId');
-  const hostsTableBody = document.getElementById('hostsTableBody');
+  function renderBans() {
+    const tbody = document.querySelector('#bansTable tbody');
+    tbody.innerHTML = '';
+    bans.forEach((user, i) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${user}</td>
+          <td>
+            <button class="unban-btn" onclick="unbanUser('${user}')">Unban</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
 
-  hostForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = hostNameInput.value.trim();
-    const experience = Number(hostExperienceInput.value);
-    const id = hostIdInput.value;
+  function renderViolations() {
+    const tbody = document.querySelector('#violationsTable tbody');
+    tbody.innerHTML = '';
+    violations.forEach(({user, text}, i) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${user}</td>
+          <td>${text}</td>
+          <td><button class="delete-btn" onclick="removeViolation(${i})">Remove</button></td>
+        </tr>
+      `;
+    });
+  }
 
-    if (!name || isNaN(experience)) return alert('Please enter valid host info.');
-
-    if (id) {
-      const h = hosts.find(h => h.id === id);
-      if (h) {
-        h.name = name;
-        h.experience = experience;
-      }
-      hostForm.querySelector('button').textContent = 'Add Host';
-      hostIdInput.value = '';
-    } else {
-      hosts.push({id: generateId(), name, experience, banned: false, violations: []});
-    }
-    hostForm.reset();
+  // --- Actions ---
+  function removeHost(index) {
+    hosts.splice(index, 1);
+    saveAll();
     renderHosts();
-    updateSummary();
-  });
-
-  function renderHosts() {
-    hostsTableBody.innerHTML = '';
-    if (hosts.length === 0) {
-      hostsTableBody.innerHTML = '<tr><td colspan="3">No hosts yet.</td></tr>';
-      return;
-    }
-    hosts.forEach(h => {
-      const bannedClass = h.banned ? 'banned' : '';
-      const bannedBadge = h.banned ? '<span class="badge-banned">BANNED</span>' : '';
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="${bannedClass}">${h.name} ${bannedBadge}</td>
-        <td>${h.experience} years</td>
-        <td>
-          <button class="edit-btn" data-id="${h.id}">Edit</button>
-          ${h.banned ? `<button class="unban-btn" data-id="${h.id}">Unban</button>` : `<button class="ban-btn" data-id="${h.id}">Ban</button>`}
-          <button class="violation-btn" data-id="${h.id}" data-type="host">Violations</button>
-          <button class="view-live-btn" data-id="${h.id}" data-name="${h.name}">View Live</button>
-          <button class="delete-btn" data-id="${h.id}">Delete</button>
-        </td>
-      `;
-      hostsTableBody.appendChild(tr);
-    });
-    addHostsListeners();
+  }
+  function removeCreator(index) {
+    creators.splice(index, 1);
+    saveAll();
+    renderCreators();
+  }
+  function removeViolation(index) {
+    violations.splice(index, 1);
+    saveAll();
+    renderViolations();
   }
 
-  function addHostsListeners() {
-    document.querySelectorAll('#hosts .edit-btn').forEach(btn => {
-      btn.onclick = () => {
-        const h = hosts.find(ht => ht.id === btn.dataset.id);
-        if (!h) return;
-        hostNameInput.value = h.name;
-        hostExperienceInput.value = h.experience;
-        hostIdInput.value = h.id;
-        hostForm.querySelector('button').textContent = 'Update Host';
-        showTab('hosts');
-      };
-    });
-    document.querySelectorAll('#hosts .delete-btn').forEach(btn => {
-      btn.onclick = () => {
-        if (!confirm('Delete this host?')) return;
-        hosts = hosts.filter(h => h.id !== btn.dataset.id);
-        relationships = relationships.filter(r => r.hostId !== btn.dataset.id);
-        renderHosts();
-        renderRelationships();
-        updateSummary();
-      };
-    });
-    document.querySelectorAll('#hosts .ban-btn').forEach(btn => {
-      btn.onclick = () => {
-        if (!confirm('Ban this host?')) return;
-        const h = hosts.find(ht => ht.id === btn.dataset.id);
-        if (!h) return;
-        h.banned = true;
-        renderHosts();
-        renderRelationships();
-        updateSummary();
-      };
-    });
-    document.querySelectorAll('#hosts .unban-btn').forEach(btn => {
-      btn.onclick = () => {
-        if (!confirm('Unban this host?')) return;
-        const h = hosts.find(ht => ht.id === btn.dataset.id);
-        if (!h) return;
-        h.banned = false;
-        renderHosts();
-        renderRelationships();
-        updateSummary();
-      };
-    });
-    document.querySelectorAll('#hosts .violation-btn').forEach(btn => {
-      btn.onclick = () => {
-        violationContext = {type: btn.dataset.type, id: btn.dataset.id};
-        openViolationModal();
-      };
-    });
-    document.querySelectorAll('#hosts .view-live-btn').forEach(btn => {
-      btn.onclick = () => {
-        const host = hosts.find(h => h.id === btn.dataset.id);
-        if (!host) return;
-        // Replace with real host profile URL if any
-        const urlName = encodeURIComponent(host.name.replace(/\s/g, '').toLowerCase());
-        window.open(`https://www.tiktok.com/@${urlName}`, '_blank');
-      };
-    });
-  }
-
-  // --- Relationships Management ---
-  const relCreatorSelect = document.getElementById('relCreator');
-  const relHostSelect = document.getElementById('relHost');
-  const relationshipForm = document.getElementById('relationshipForm');
-  const relationshipList = document.getElementById('relationshipList');
-
-  function renderRelationshipSelects() {
-    relCreatorSelect.innerHTML = '';
-    relHostSelect.innerHTML = '';
-
-    const activeCreators = creators.filter(c => !c.banned);
-    const activeHosts = hosts.filter(h => !h.banned);
-
-    if (activeCreators.length === 0) {
-      relCreatorSelect.innerHTML = '<option disabled>No active creators</option>';
-    } else {
-      activeCreators.forEach(c => {
-        const option = document.createElement('option');
-        option.value = c.id;
-        option.textContent = c.name;
-        relCreatorSelect.appendChild(option);
-      });
-    }
-    if (activeHosts.length === 0) {
-      relHostSelect.innerHTML = '<option disabled>No active hosts</option>';
-    } else {
-      activeHosts.forEach(h => {
-        const option = document.createElement('option');
-        option.value = h.id;
-        option.textContent = h.name;
-        relHostSelect.appendChild(option);
-      });
+  function banUser(username) {
+    if (!bans.includes(username)) {
+      bans.push(username);
+      saveAll();
+      renderBans();
+      renderCreators();
     }
   }
+  function unbanUser(username) {
+    bans = bans.filter(u => u !== username);
+    saveAll();
+    renderBans();
+    renderCreators();
+  }
 
-  relationshipForm.addEventListener('submit', e => {
+  function viewLive(username) {
+    // Example: opens the TikTok profile in a new tab — change URL as needed
+    const url = `https://www.tiktok.com/@${encodeURIComponent(username)}`;
+    window.open(url, '_blank');
+  }
+
+  // --- Form handlers ---
+  document.getElementById('hostForm').addEventListener('submit', e => {
     e.preventDefault();
-    const creatorId = relCreatorSelect.value;
-    const hostId = relHostSelect.value;
-    if (!creatorId || !hostId) return alert('Select creator and host');
-
-    // Prevent duplicate
-    const exists = relationships.some(r => r.creatorId === creatorId && r.hostId === hostId);
-    if (exists) return alert('This relationship already exists.');
-
-    relationships.push({id: generateId(), creatorId, hostId});
-    renderRelationships();
-    updateSummary();
+    const input = document.getElementById('hostName');
+    const val = input.value.trim();
+    if (val && !hosts.includes(val)) {
+      hosts.push(val);
+      saveAll();
+      renderHosts();
+      input.value = '';
+    }
   });
 
-  function renderRelationships() {
-    relationshipList.innerHTML = '';
-    if (relationships.length === 0) {
-      relationshipList.innerHTML = '<p>No relationships yet.</p>';
-      return;
-    }
-    relationships.forEach(r => {
-      const creator = creators.find(c => c.id === r.creatorId);
-      const host = hosts.find(h => h.id === r.hostId);
-      if (!creator || !host) return; // Data corrupted
-      const div = document.createElement('div');
-      div.className = 'relationship-item';
-      const bannedClass = (creator.banned || host.banned) ? 'banned' : '';
-      div.innerHTML = `
-        <span class="${bannedClass}">${creator.name} &mdash; ${host.name}</span>
-        <button data-id="${r.id}">Remove</button>
-      `;
-      relationshipList.appendChild(div);
-      div.querySelector('button').onclick = () => {
-        if (!confirm('Remove this relationship?')) return;
-        relationships = relationships.filter(rel => rel.id !== r.id);
-        renderRelationships();
-        updateSummary();
-      };
-    });
-  }
-
-  // --- Violation Modal ---
-  const violationModal = document.getElementById('violationModal');
-  const violationUserName = document.getElementById('violationUserName');
-  const violationList = document.getElementById('violationList');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const addViolationForm = document.getElementById('addViolationForm');
-  const violationReasonInput = document.getElementById('violationReason');
-
-  function openViolationModal() {
-    let user;
-    if (violationContext.type === 'creator') {
-      user = creators.find(c => c.id === violationContext.id);
-    } else if (violationContext.type === 'host') {
-      user = hosts.find(h => h.id === violationContext.id);
-    }
-    if (!user) return alert('User not found');
-
-    violationUserName.textContent = user.name;
-    violationReasonInput.value = '';
-    renderViolationList(user.violations);
-    violationModal.style.display = 'flex';
-  }
-
-  function renderViolationList(violations) {
-    violationList.innerHTML = '';
-    if (!violations || violations.length === 0) {
-      violationList.innerHTML = '<li>No violations recorded.</li>';
-      return;
-    }
-    violations.forEach(v => {
-      const li = document.createElement('li');
-      const dateStr = new Date(v.date).toLocaleString();
-      li.textContent = `${dateStr}: ${v.reason}`;
-      violationList.appendChild(li);
-    });
-  }
-
-  addViolationForm.addEventListener('submit', e => {
+  document.getElementById('creatorForm').addEventListener('submit', e => {
     e.preventDefault();
-    const reason = violationReasonInput.value.trim();
-    if (!reason) return alert('Enter violation reason.');
-
-    let user;
-    if (violationContext.type === 'creator') {
-      user = creators.find(c => c.id === violationContext.id);
-    } else if (violationContext.type === 'host') {
-      user = hosts.find(h => h.id === violationContext.id);
+    const input = document.getElementById('creatorName');
+    const val = input.value.trim();
+    if (val && !creators.includes(val)) {
+      creators.push(val);
+      saveAll();
+      renderCreators();
+      input.value = '';
     }
-    if (!user) return alert('User not found');
-
-    user.violations.push({date: new Date().toISOString(), reason});
-    renderViolationList(user.violations);
-    violationReasonInput.value = '';
   });
 
-  closeModalBtn.onclick = () => {
-    violationModal.style.display = 'none';
-  };
+  document.getElementById('violationForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const userInput = document.getElementById('violationUser');
+    const violationInput = document.getElementById('violationText');
+    const userVal = userInput.value.trim();
+    const violationVal = violationInput.value.trim();
+    if (userVal && violationVal) {
+      violations.push({ user: userVal, text: violationVal });
+      saveAll();
+      renderViolations();
+      userInput.value = '';
+      violationInput.value = '';
+    }
+  });
 
-  // Initialize
-  showTab('dashboard');
+  // Initial render
+  renderHosts();
+  renderCreators();
+  renderBans();
+  renderViolations();
 </script>
-
-<style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    height: 100vh;
-    background: #f5f6fa;
-  }
-  aside.sidebar {
-    width: 220px;
-    background: #222;
-    color: #eee;
-    display: flex;
-    flex-direction: column;
-  }
-  .logo {
-    font-size: 1.5em;
-    font-weight: 700;
-    text-align: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid #444;
-  }
-  nav {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  nav button {
-    background: none;
-    border: none;
-    color: #ccc;
-    padding: 1rem 1.5rem;
-    text-align: left;
-    cursor: pointer;
-    border-left: 4px solid transparent;
-    font-weight: 600;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  nav button:hover {
-    background: #333;
-  }
-  nav button.active {
-    color: #fff;
-    border-left-color: #ff3c78;
-    background: #111;
-  }
-  main.main {
-    flex-grow: 1;
-    padding: 1.5rem;
-    overflow-y: auto;
-  }
-  h1 {
-    margin-top: 0;
-  }
-  form {
-    margin-bottom: 1rem;
-    max-width: 400px;
-  }
-  label {
-    display: block;
-    margin: 0.5rem 0 0.2rem;
-    font-weight: 600;
-  }
-  input, select, textarea {
-    width: 100%;
-    padding: 0.4rem 0.6rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    box-sizing: border-box;
-  }
-  textarea {
-    resize: vertical;
-  }
-  .submit-btn {
-    margin-top: 0.8rem;
-    background: #ff3c78;
-    color: #fff;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  .submit-btn:hover {
-    background: #e6326b;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  th, td {
-    border: 1px solid #ccc;
-    padding: 0.5rem 0.7rem;
-    text-align: left;
-  }
-  .banned {
-    text-decoration: line-through;
-    color: #999;
-  }
-  .badge-banned {
-    background: #ff3c78;
-    color: white;
-    padding: 2px 6px;
-    font-size: 0.75rem;
-    margin-left: 6px;
-    border-radius: 4px;
-    font-weight: 700;
-  }
-  button {
-    margin-right: 0.4rem;
-    background: #444;
-    color: white;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 0.85rem;
-  }
-  button:hover {
-    background: #ff3c78;
-  }
-  .relationship-list {
-    max-width: 600px;
-  }
-  .relationship-item {
-    background: white;
-    margin-bottom: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #ccc;
-  }
-  .modal-overlay {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-  }
-  .modal {
-    background: white;
-    border-radius: 6px;
-    padding: 1rem 1.5rem;
-    max-width: 400px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .modal h2 {
-    margin-top: 0;
-  }
-  .close-btn {
-    background: #ff3c78;
-    color: white;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-weight: 700;
-    float: right;
-    cursor: pointer;
-    margin-bottom: 0.5rem;
-  }
-</style>
+</body>
+</html>
